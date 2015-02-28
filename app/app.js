@@ -1,7 +1,7 @@
 /* global angular */
 var app = angular.module('app', ['facebook'])
 
-    .config(['FacebookProvider', function(FacebookProvider) {
+.config(['FacebookProvider', function(FacebookProvider) {
      var myAppId = '333316433531846';
      
      // You can set appId with setApp method
@@ -14,96 +14,49 @@ var app = angular.module('app', ['facebook'])
      FacebookProvider.init(myAppId);
      
     }
-]).service('facebookAPI', ['facebook', function(facebook) {
-    //user, loggedIn and ready variables //
-    /*
-    this.user = {};
-    this.loggedIn = false;
-    */
-    this.isReady = function() { 
-        return facebook.isReady();
-    };
-    
-    
-    //check if the user is currnetly logged in to facebook //
-    this.connection = function() {
-        return facebook.getLoginStatus(function(response) {
-            return response.status;
-        });
-    };
-    
-    //
-                            
-    // facebook api get and post with id and fields//
-    this.getUserInfo = function(){
-        return facebook.api('/me', function(response) {
-            return response;
-        });
-    };
-    
-    this.getFeed = function(groupId){
-        return facebook.api('/'+ groupId+'feed', function(response){
-            return response;
-        });
-    };
-    
-    this.postMessage = function(groupId, message){
-        return facebook.api('/'+groupId+'/feed', 'post', {"message":message}, function(response) {
-            return response;
-        }); 
-    }
-    
-    // log in to facebook //
-    this.logIn = function() {
-        return facebook.login(function(response) {
-          return response.status;
-        });
-    };
-                                                   
-}])
-
-    .controller('MainCtrl', [
+])
+  .controller('MainCtrl', [
     '$scope',
     '$timeout',
-    'facebookAPI',
-    function($scope, $timeout, facebookAPI) {
+    'Facebook',
+    function($scope, $timeout, Facebook) {
       
-      var groupId = '115835695144753';
       // Define user empty data :/
       $scope.user = {};
-        
+
       // Defining user logged status
       $scope.loggedIn = false;
-
+      
       // And some fancy flags to display messages upon user status change
       $scope.byebye = false;
       $scope.salutation = false;
       var userIsConnected = false;
-         
+        
+
+      
       /**
        * Watch for Facebook to be ready.
        * There's also the event that could be used
        */
       $scope.$watch(
         function() {
-          return facebookAPI.isReady();
+          return Facebook.isReady();
         },
         function(newVal) {
           if (newVal)
             $scope.facebookReady = true;
-            initializeMe();
-
         }
       );
       
       // to check if user is logged in or not. If he is, load up the $scope.me function
-     var initializeMe = function() {
-         if(facebookAPI.connection == 'connected') {
-             $scope.user = facebookAPI.getUserInfo();
-             $scope.loggedIn = true;
-             
-         }
-     }
+      Facebook.getLoginStatus(function(response) {
+        if (response.status == 'connected') {
+          $scope.loggedIn = true;
+          $scope.me();
+          $scope.getFeed();
+          console.log('feed:' + $scope.feed);
+        }
+      });
       
       /**
        * Intent to login
@@ -111,24 +64,61 @@ var app = angular.module('app', ['facebook'])
       $scope.intentLogin = function() {
         alert("trying to login");
         if(!userIsConnected) {
-          login();
+          $scope.login();
         }
       };
       
       /**
        * Successful Login
        */
-       var login = function() {
-         if(facebookAPI.login() == 'connected') {
+       $scope.login = function() {
+         Facebook.login(function(response) {
+          if (response.status == 'connected') {
             $scope.loggedIn = true;
-            $scope.me = facebookAPI.getUserInfo();
-            $scope.feed = facebookAPI.getFeed(groupId);
+            $scope.me();
+            $scope.getFeed();
           }
         
-        };
-       
+        });
+       };
        
        /**
+        * me funtion, loads up the user information
+        */
+        $scope.me = function() {
+          Facebook.api('/me', function(response) {
+            /**
+             * Using $scope.$apply since this happens outside angular framework.
+             */
+            $scope.$apply(function() {
+              $scope.user = response;
+            });
+            
+          });
+        };
+      
+      /**
+       * Logout
+       */
+      $scope.logout = function() {
+        Facebook.logout(function() {
+          $scope.$apply(function() {
+            $scope.user   = {};
+            $scope.loggedIn = false;  
+          });
+        });
+      }
+      
+      $scope.getFeed = function(){
+            Facebook.api('/115835695144753?fields=feed', function(response) {
+                console.log(response);
+                $scope.$apply(function() {
+                    $scope.feed = response.feed;
+                });
+            });
+        };
+      
+      /**
        * Taking approach of Events :D
        */
       $scope.$on('Facebook:statusChange', function(ev, data) {
@@ -178,10 +168,5 @@ var app = angular.module('app', ['facebook'])
 			}
 		}
 	});
-
-
-
-
-
 
 
