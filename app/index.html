@@ -20,24 +20,89 @@
     <script src="bower_components/html5-boilerplate/js/vendor/modernizr-2.6.2.min.js"></script>
 </head>
 <body ng-controller = "MainCtrl">
-    <div class="jumbotron" background >
+    
+    <!-- header -->
+<div class="navbar navbar-default navbar-static-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">UnicycleChat</a>
+    </div>
+    <div class="navbar-collapse collapse" id="searchbar">
+     
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="about.html">About</a></li>
+        <li><a href="#" data-prevent="" data-ng-show="!loggedIn" ng-click="intentLogin()">Login with FB</a></li>
+        <li><a href="#" data-prevent="" data-ng-show="loggedIn" >{{user.name}}</a></li>
+
+      </ul>
+
+     <form class="navbar-form">
+        <div class="form-group" style="display:inline;">
+          <div class="input-group" style="display:table; border-radius:0px">
+            <span class="input-group-addon" style="width:1%;border-radius:0px"><span class="glyphicon glyphicon-search"></span></span>
+            <input class="form-control" style="border-radius:0px"name="search" placeholder="Search Here" autocomplete="off" autofocus="autofocus" type="text" ng-model="searchQuery">
+          </div>
+        </div>
+      </form>
+
+    </div><!--/.nav-collapse -->
+  </div>
+</div>
+  
+    <div class="container">
+        <ol class="breadcrumb">
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Library</a></li>
+          <li class="active">Data</li>
+        </ol>
+    </div>
+    
+    <!-- Jumbotron header 
+    <div class="jumbotron" ng-style="{'background-image':'url({{groupCover.source}})'}">
         <h1> Unicycle Chat</h1> 
         <p ng-show="!loggedIn">Welcome to Unicycle Chat. Please log in.</p>
         <p ng-show="loggedIn"> Hello {{user.name}}! <p>
         <button type="button" class="btn btn-primary btn-large" data-ng-show="!loggedIn" ng-click="intentLogin()">Login with Facebook</button>
     </div>
-
+    -->
+    
     <!--[if lt IE 7]>
         <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
+    
+    
+    <!-- view categories -->
+    
+    
+    <!-- view feed --> 
     <div class="container" ng-show="loggedIn">
-        <div class="row">
-            <div class="col-sm-8" padding="10px" ng-repeat="post in feed.data">
-                {{post.message}}
+            <div class="panel panel-primary" ng-repeat="post in bigFeed.data | filter:searchQuery" style="border-radius:0px">
+                <div class="panel-heading" style="border-radius:0px">
+                <span>{{post.message.substring(0,100) + '...'}}</span>
+
+                <span class="pull-right"><b >From: {{post.from.name}}</b> 
+                <span class="badge" >{{post.likes.data.length}} likes</span>
+                </span>
+                </div>
+                <div class="panel-body" style="border-radius:0px">
+                    <p>{{post.message}}</p>
                 <img ng-src="{{post.picture}}"/>
+                
+                <ul class ="list-group" ng-show="showComments">
+                    <li class = "list-group-item"> <b>Comments:</b></li>
+                    <li class = "list-group-item"  ng-repeat = "comment in post.comments.data"> 
+                       <b>{{comment.from.name}}</b> {{comment.message}}
+                    </li>
+                </ul>
+                </div>            
         
             </div>
-        </div>
+        </ul>
     </div>
   
     
