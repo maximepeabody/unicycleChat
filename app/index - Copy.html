@@ -109,20 +109,18 @@
     
     <!-- view feed --> 
     <div class="container" ng-show="loggedIn">
-        <div ng-repeat="post in feed.data | filter:search.string ">
-            <div class="panel panel-primary"  style="border-radius:0px">
+            <div class="panel panel-primary" ng-repeat="post in feed.data | filter:search.string " style="border-radius:0px">
                 <div class="panel-heading" style="border-radius:0px">
-                    <span>{{post.message.substring(0,100) + '...'}}</span>
-
-                    <span class="pull-right"><b >From: {{post.from.name}}</b> 
-                    <span class="badge" >{{post.likes.data.length}} likes</span>
-                    </span>
+                <span>{{post.message.substring(0,100) + '...'}}</span>
+                    
+                <span class="pull-right"><b >From: {{post.from.name}}</b> 
+                <span class="badge" >{{post.likes.data.length}} likes</span>
+                </span>
                 </div>
                 <div class="panel-body" style="border-radius:0px">
                     <p>{{post.message}}</p>
-                    <img ng-src="{{post.picture}}"/>
-                </div>            
-
+                <img ng-src="{{post.picture}}"/>
+                
                     <!--
                 <ul class ="list-group" ng-show="showComments">
                     <li class = "list-group-item"> <b>Comments:</b></li>
@@ -132,7 +130,7 @@
                 </ul>
 -->
                     
-                    <section class="comment-list" ng-repeat = "comment in post.comments.data" ng-show="false">
+                    <section class="comment-list" ng-repeat = "comment in post.comments.data">
                         <article class="row">
                             <div class="col-md-2 col-sm-2 hidden-xs">
                             <figure class="thumbnail">
@@ -187,11 +185,13 @@
                     </section>
                     
                     
-                    <div style='clear: both;'></div>        
+                </div>            
+        
             </div>
-        </div>
+        </ul>
     </div>
-
+    <div>
+    </div>
   
     
     <!-- In production use:
