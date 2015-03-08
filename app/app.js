@@ -21,6 +21,7 @@ var app = angular.module('app', ['facebook'])
     'Facebook',
     function($scope, $timeout, Facebook) {
       
+      $scope.search = {in:'recent', order:'date', filter:'content'}
       // Define user empty data :/
       $scope.user = {};
       var groupId = '115835695144753';
@@ -167,7 +168,7 @@ var app = angular.module('app', ['facebook'])
           
         var recursiveFeed = function(page) {
             Facebook.api(page, function(response) {
-                if(count<10 && page !=null) {
+                if(count<2 && page !=null) {
                     count++;
                     currentPage = response.paging.next.substring(31);
                     for(var i = 0; i<response.data.length; i++) {
@@ -185,44 +186,7 @@ var app = angular.module('app', ['facebook'])
         };
           recursiveFeed(currentPage);
           
-      }
-        /*
-      $scope.getBigFeed = function() {
-          //if($scope.feed) {
-              $scope.bigFeed = {data:$scope.feed.data};
-              //var currFeed = feed;
-              //console.log($scope.feed.paging.next.substring(31));
-              var pageArray = [];
-              pageArray.push($scope.feed.paging.next.substring(31));// = feed.next;
-              var numPages = 0;
-              while(pageArray[numPages] != null && numPages<10) {
-                 //console.log($scope.nextPage);
-                  var done = false;
-                  Facebook.api(pageArray[numPages], function(response) {
-                     // $scope.bigFeed.data = $scope.bigFeed.data.concat(response.data);
-                      for(var i = 0; i<response.data.length; i++) {
-                          $scope.bigFeed.data.push(response.data[i]);
-                      }
-                      pageArray.push(response.paging.next.substring(31));
-                     // console.log(pageArray[1]);
-                      done = true;
-
-                  });
-                  console.log(done);
-                  numPages+=1;
-                  
-                  console.log(pageArray[1]);
-
-              }
-              console.log("bigFeed: ");
-              console.log($scope.bigFeed);
-         // }
-          //else console.log('couldnt get feed');
-      };
-        */
-    
-      
-      
+      }      
     }
     
   ])
