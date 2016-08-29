@@ -98,20 +98,24 @@
 
       <!-- view categories -->
       <div class="col-sm-3" ng-controller="CategoryCtrl">
-        <div class="panel">
+        <div>
           <h4> Select Group </h4>
           <div class="list-group">
             <a ng-repeat="group in groups" href="#" ng-class="{'list-group-item':true, 'active': group.id==currentGroup.id}" ng-click="setCurrentGroup(group.id)">
             {{group.name}}
-          </a>
-
+            </a>
           </div>
+          <div class="form-group">
+            <input type="text" ng-model="query" class="form-control" placeholder="Add a group by name or id">
+            <button type="button" ng-click="addGroup(query)" class="btn btn-default btn-block">Add</button>
+          </div>
+          <!-- /input-group -->
         </div>
       </div>
 
       <!-- view feed -->
       <div class="col-sm-6" ng-show="loggedIn">
-        <div ng-repeat="post in feed.data | filter:search.string ">
+        <div ng-repeat="post in feed.data">
           <div class="panel panel-primary" style="border-radius:0px">
             <div class="panel-heading" style="border-radius:0px">
               <span><b >From: {{post.from.name}}</b>
@@ -130,10 +134,7 @@
                   <a href={{post.link}}> {{post.link}} </a>
                   <img class="img-responsive" ng-src={{post.full_picture}} ng-show="{{post.type === 'photo'}}"> </img>
                   <iframe style="max-width:100%" title="video player" width="480" height="390" ng-src="{{post.source2 | trustAsResourceUrl }}" autoplay="0" frameborder="0" allowfullscreen ng-show="{{post.type === 'video'}}"></iframe>
-
                 </div>
-
-
               </div>
             </div>
 
@@ -205,6 +206,10 @@
 
           <div style='clear: both;'></div>
         </div>
+        <div class="btn-group btn-group-justified">
+          <a href="#" class="btn btn-primary" ng-click="getPreviousPage()">Previous</a>
+          <a href="#" class="btn btn-primary" ng-click="getNextPage()">Next</a>
+        </div>
       </div>
     </div>
 
@@ -221,5 +226,5 @@
 
 
   <script src="app.js" </script>
-    < /body> <
-    /html>
+    < /body> < /
+    html >
