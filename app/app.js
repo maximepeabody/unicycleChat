@@ -1,44 +1,59 @@
 /* global angular */
-var app = angular.module('app', ['facebook', 'mongolabResourceHttp', 'infinite-scroll'])
+var app = angular.module('app', ['facebook'])
 
 
 /* config facebook api provider */
 .config(['FacebookProvider', function(FacebookProvider) {
      var myAppId = '333316433531846';
-     
+
      // You can set appId with setApp method
      // FacebookProvider.setAppId('myAppId');
-     
+
      /**
       * After setting appId you need to initialize the module.
       * You can pass the appId on the init method as a shortcut too.
       */
      FacebookProvider.init(myAppId);
-     
+
+
     }
 ])
-/*  mongolabresource service */
- .factory('Archive', function ($mongolabResourceHttp) {
-    return $mongolabResourceHttp('archives');
-  })
-  .constant('MONGOLAB_CONFIG',{API_KEY:'kKzRztkYviZTkqkp0YPH_BqW9AfhHjLA', DB_NAME:'unicyclechat'})
-
-
+.filter('trustAsResourceUrl', ['$sce', function($sce) {
+    return function(val) {
+        return $sce.trustAsResourceUrl(val);
+    };
+}])
 /* query service */
 .factory('Query', function() {
     return {string:'', in:'',filter:'',order:''};
 })
 .factory('CurrentGroup', function(){
-    defaultId = '115835695144753';
-    return id;
-})
-.controller('CategoryCtrl', [ 
-    '$scope',
-    'Currentgroup',
-    function($scope, CurrentGroup) {
-        $scope.category = CurrentGroup;
+    var group = {};
+    group.defaultId = '115835695144753';
+    group.id = group.defaultId;
+    group.setId = function(id) {
+      group.id = id;
     }
-])
+    return group;
+})
+.controller('CategoryCtrl', [
+    '$scope',
+    'CurrentGroup',
+    function($scope, CurrentGroup) {
+      $scope.currentGroup = CurrentGroup;
+      $scope.groups = [
+        {id: '1170550659625884', name: "Urban Unicycle chat"},
+        {id: '115835695144753', name: "Unicycle Chat"},
+        {id: '528112983875724', name:"Unicycle Memes"},
+        {id: '1413498285528904', name: "Unicycle Trading Post"}
+      ];
+
+      $scope.setCurrentGroup = function(id) {
+        CurrentGroup.id = id;
+        $scope.loadFeed(CurrentGroup.id);
+      }
+
+    }])
 
 .controller('HeaderCtrl', [
     '$scope',
@@ -52,40 +67,25 @@ var app = angular.module('app', ['facebook', 'mongolabResourceHttp', 'infinite-s
         $scope.setFilter = function(s) {$scope.search.filter = s};
         $scope.setOrder = function(s) {$scope.search.order = s};
     }])
-         
+
   .controller('MainCtrl', [
     '$scope',
     '$timeout',
     'Facebook',
-      'Archive',
       'Query',
       'CurrentGroup',
-    function($scope, $timeout, Facebook, Archive, Query, CurrentGroup) {
-        
-      
+      '$sce',
+    function($scope, $timeout, Facebook, Query, CurrentGroup, $sce) {
+
         $scope.search = Query;
         $scope.facebookBusy = false;
-        /*
-        Archive.query({"post.from.name":"Maxime Peabody"}).then(function(posts){
-            $scope.archive = posts;
-            console.log(posts);
-        });*/
-        
-        /*
-        Archive.all({limit:100}).then(function(posts){
-            $scope.postsByMaxime = posts;
-            console.log($scope.postsByMaxime);
 
-        });*/
-        $scope.toArchive = [];
-        $scope.toUpdate = [];
-        
-        
+
         // Define user empty data :/
         $scope.user = {};
-        var groupId = CurrentGroup;
+        var groupId = CurrentGroup.id;
         $scope.loggedIn = false;
-        $scope.currentPage = '/'+CurrentGroup+'?fields=feed';
+
         /**
         * Watch for Facebook to be ready.
         * There's also the event that could be used
@@ -105,13 +105,11 @@ var app = angular.module('app', ['facebook', 'mongolabResourceHttp', 'infinite-s
             if (response.status == 'connected') {
             $scope.loggedIn = true;
             $scope.me();
-            $scope.getFeed();
-            // $scope.getBigFeed();
-            $scope.getGroupCover();
-
+            $scope.loadFeed(CurrentGroup.id);
+            $scope.loadGroupCover();
             }
         });
-      
+
         /**
         * Intent to login
         */
@@ -121,7 +119,7 @@ var app = angular.module('app', ['facebook', 'mongolabResourceHttp', 'infinite-s
                 $scope.login();
            // }
         };
-      
+
         /**
         * Successful Login
         */
@@ -130,12 +128,12 @@ var app = angular.module('app', ['facebook', 'mongolabResourceHttp', 'infinite-s
             if (response.status == 'connected') {
                 $scope.loggedIn = true;
                 $scope.me();
-                $scope.getFeed();
+                $scope.loadFeed(CurrentGroup.id);
                 //   $scope.getBigFeed();
             }
             }, {scope:'publish_actions'});
         };
-       
+
         /**
         * me funtion, loads up the user information
         */
@@ -146,28 +144,28 @@ var app = angular.module('app', ['facebook', 'mongolabResourceHttp', 'infinite-s
                 */
                 $scope.$apply(function() {
                     $scope.user = response;
-                });        
+                });
             });
         };
-        
-        $scope.getGroupCover = function() {
+
+        $scope.loadGroupCover = function() {
             var cover;
             Facebook.api('/'+groupId + '?fields=cover', function(response) {
                 Facebook.api('/'+response.cover.id, function(response) {
-                    cover = response.images;
+                    $scope.cover = response.images;
                 });
             });
-            return cover;
+            //return cover;
         };
-        
+
         $scope.submitComment = function(comment, id) {
             console.log(comment);
             console.log(id);
             Facebook.api('/'+id+'/comments', 'POST',{'message':comment}, function(response){
                 console.log(response);
             });
-        }
-      
+        };
+
         /**
         * Logout
         */
@@ -175,76 +173,67 @@ var app = angular.module('app', ['facebook', 'mongolabResourceHttp', 'infinite-s
             Facebook.logout(function() {
                 $scope.$apply(function() {
                 $scope.user   = {};
-                $scope.loggedIn = false;  
-                });
-            });
-        }
-      
-        $scope.getFeed = function(){
-            Facebook.api('/115835695144753?fields=feed&limit=1000', function(response) {
-                console.log(response);
-                $scope.$apply(function() {
-                    $scope.feed = response.feed;
-                    //$scope.getBigFeed();
-                    $scope.currentPage= $scope.feed.paging.next.substring(31);
-                    recursiveFeed($scope.currentPage,0,5);
+                $scope.loggedIn = false;
                 });
             });
         };
-        
-        $scope.getArchive = function() {
-            
-        }
-      
-        
-       /*$scope.getFeed = function(){
-            //var currentPage =$scope.feed.paging.next.substring(31);
-            var count = 0;
-            $scope.feed = {data:[]};
-          
-            //recursiveFeed($scope.currentPage,0, 1);
-        }*/
-        var recursiveFeed = function(page, count, limit) {
-             if(count < limit && page !=null) {
-                Facebook.api(page, function(response) {
-                        count++;
-                        if(response.paging == undefined)
-                        {
-                            $scope.currentPage = null;
-                        }
-                        else{
-                        $scope.currentPage = response.paging.next.substring(31);    
-                        console.log($scope.currentPage);
-                        for(var i = 0; i<response.data.length; i++) {
-                            if(count<2){
-                                $scope.feed.data.push(response.data[i]);
-                            }
-                            
-                         
-                            var newArchive = new Archive();
-                            newArchive.post = response.data[i];
-                            console.log(response.data[i]);
-                            $scope.toArchive.push(newArchive);
 
-                        }
-                        console.log(response);
-                        }
-                        recursiveFeed($scope.currentPage,count,limit);
-                    });
-             }
-                            
-            else{
-                Archive.save($scope.toArchive);
+        $scope.loadFeed = function(id){
+            Facebook.api('/' + id + '?fields=feed{from,message,link,picture,source,full_picture,likes,type}&limit=15', function(response) {
+                console.log(response);
+
+                $scope.$apply(function() {
+                    $scope.feed = response.feed;
+                    $scope.loadFeedProfilePictures($scope.feed);
+                    $scope.loadVideos($scope.feed);
+                    $scope.loadGroupCover();
+                    $scope.nextPage = $scope.feed.paging.next;//.substring(31);
+                });
+            });
+        };
+
+        $scope.getProfilePicture = function(user) {
+          Facebook.api('/'+user.id+'/picture?type=square', function(response) {
+            user.picture = response.data.url;
+          });
+        };
+
+        $scope.loadFeedProfilePictures = function(feed) {
+          for(var i = 0; i<feed.data.length; i++) {
+            $scope.getProfilePicture(feed.data[i].from);
+          }
+        };
+
+        // go through the feed and load the proper source for embeded video //
+        $scope.loadVideos = function(feed) {
+          for(var i =0 ; i<feed.data.length; i++) {
+            var post = feed.data[i];
+            getVideoSource(post);
+          }
+        };
+        var getVideoSource = function(post) {
+          if(post.type==='video') {
+            if(post.link.indexOf("facebook") >=0 ) {
+              var tempStringArray = post.link.split('/');
+              var videoId = tempStringArray[tempStringArray.length - 1];
+              if(videoId==="") {
+                videoId = tempStringArray[tempStringArray.length - 2];
+              }
+              Facebook.api('/' + videoId + '?fields=embed_html', function(response) {
+                if(response.error) {
+                  console.log(response);
+                  console.log(videoId);
+                }
+                else{
+                   post.source2 = response.embed_html.split("\"")[1];
+                }
+              });
             }
-        }; 
-        /*
-        $scope.getMore = function() {
-            console.log('fetching more posts...');
-            if(!$scope.facebookBusy)
-                recursiveFeed($scope.currentPage,0, 1);
-           // $scope.feed=$scope.bigFeed;
+            else {
+              post.source2 = post.source.replace("autoplay=1", "autoplay=0");
+            }
+          }
         }
-        */
      }
   ])
 
@@ -267,5 +256,3 @@ var app = angular.module('app', ['facebook', 'mongolabResourceHttp', 'infinite-s
 			}
 		}
 	});
-
-

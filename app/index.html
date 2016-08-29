@@ -2,40 +2,47 @@
 <!--[if lt IE 7]>      <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html lang="en" ng-app="app" class="no-js"> <!--<![endif]-->
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>My AngularJS App</title>
-    <meta name="description" content="UnicycleChat facebook group app">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/app/css/comments.css">
+<!--[if gt IE 8]><!-->
+<html lang="en" ng-app="app" class="no-js">
+<!--<![endif]-->
 
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <!-- Latest compiled JavaScript -->
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-   <!-- <link rel="stylesheet" href="app.css"> -->
-    <script src="bower_components/html5-boilerplate/js/vendor/modernizr-2.6.2.min.js"></script>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>My AngularJS App</title>
+  <meta name="description" content="UnicycleChat facebook group app">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Latest compiled and minified CSS -->
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <link rel="stylesheet" type="text/css" href="/app/css/comments.css">
+
 </head>
-<body ng-controller = "MainCtrl">
-    
-    <!-- header -->
-<div class="navbar navbar-default navbar-static-top" ng-controller = "HeaderCtrl">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">UnicycleChat</a>
-    </div>
-    <div class="navbar-collapse collapse" id="searchbar">
-     
-      <ul class="nav navbar-nav navbar-right">
+
+<body ng-controller="MainCtrl">
+
+  <!-- header -->
+  <div class="navbar navbar-default navbar-static-top" ng-controller="HeaderCtrl">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">UnicycleChat</a>
+      </div>
+      <div class="navbar-collapse collapse" id="searchbar">
+
+
+        <ul class="nav navbar-nav navbar-right">
+
+          <!-- No search for now
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Search in: {{search.in}} <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
@@ -61,15 +68,15 @@
 
           </ul>
         </li>
+-->
+          <li><a href="#" data-prevent="" data-ng-show="loggedIn">{{user.name}}</a></li>
 
-        <li><a href="#" data-prevent="" data-ng-show="loggedIn" >{{user.name}}</a></li>
-
-        <li><a href="#" data-prevent="" data-ng-show="loggedIn" ng-click="intentLogout()">logout</a></li>
-        <li><a href="#" data-prevent="" data-ng-show="!loggedIn" ng-click="intentLogin()">login</a></li>
+          <li><a href="#" data-prevent="" data-ng-show="loggedIn" ng-click="intentLogout()">logout</a></li>
+          <li><a href="#" data-prevent="" data-ng-show="!loggedIn" ng-click="intentLogin()">login</a></li>
 
 
-      </ul>
-
+        </ul>
+        <!-- No search for now
      <form class="navbar-form">
         <div class="form-group" style="display:inline;">
           <div class="input-group" style="display:table; border-radius:0px">
@@ -78,137 +85,146 @@
           </div>
         </div>
       </form>
-
-    </div><!--/.nav-collapse -->
+-->
+      </div>
+      <!--/.nav-collapse -->
+    </div>
   </div>
-</div>
-  
-    <div class="container">
-        <ol class="breadcrumb">
-          <li><a href="#">Categories</a></li>
-          <li class="active">Unicycle Chat</li>
-        </ol>
-    </div>
-    
-    <!-- Jumbotron header 
-    <div class="jumbotron" ng-style="{'background-image':'url({{groupCover.source}})'}">
-        <h1> Unicycle Chat</h1> 
-        <p ng-show="!loggedIn">Welcome to Unicycle Chat. Please log in.</p>
-        <p ng-show="loggedIn"> Hello {{user.name}}! <p>
-        <button type="button" class="btn btn-primary btn-large" data-ng-show="!loggedIn" ng-click="intentLogin()">Login with Facebook</button>
-    </div>
-    -->
-    
-    <!--[if lt IE 7]>
-        <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
-    
-    
-    <!-- view categories -->
-    
-    
-    <!-- view feed --> 
-    <div class="container" ng-show="loggedIn">
+
+
+
+  <div class="container">
+    <div class="row">
+
+      <!-- view categories -->
+      <div class="col-sm-3" ng-controller="CategoryCtrl">
+        <div class="panel">
+          <h4> Select Group </h4>
+          <div class="list-group">
+            <a ng-repeat="group in groups" href="#" ng-class="{'list-group-item':true, 'active': group.id==currentGroup.id}" ng-click="setCurrentGroup(group.id)">
+            {{group.name}}
+          </a>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- view feed -->
+      <div class="col-sm-6" ng-show="loggedIn">
         <div ng-repeat="post in feed.data | filter:search.string ">
-            <div class="panel panel-primary"  style="border-radius:0px">
-                <div class="panel-heading" style="border-radius:0px">
-                    <span>{{post.message.substring(0,100) + '...'}}</span>
-
-                    <span class="pull-right"><b >From: {{post.from.name}}</b> 
-                    <span class="badge" >{{post.likes.data.length}} likes</span>
-                    </span>
+          <div class="panel panel-primary" style="border-radius:0px">
+            <div class="panel-heading" style="border-radius:0px">
+              <span><b >From: {{post.from.name}}</b>
+                    <span class="badge pull-right" >{{post.likes.data.length+0}} likes</span>
+              </span>
+            </div>
+            <div class="panel-body" style="border-radius:0px">
+              <div class="media">
+                <div class="media-left">
+                  <a href="#">
+                    <img class="media-object" ng-src="{{post.from.picture}}" alt="...">
+                  </a>
                 </div>
-                <div class="panel-body" style="border-radius:0px">
-                    <p>{{post.message}}</p>
-                    <img ng-src="{{post.picture}}"/>
-                </div>            
+                <div class="media-body">
+                  {{post.message}}
+                  <a href={{post.link}}> {{post.link}} </a>
+                  <img class="img-responsive" ng-src={{post.full_picture}} ng-show="{{post.type === 'photo'}}"> </img>
+                  <iframe style="max-width:100%" title="video player" width="480" height="390" ng-src="{{post.source2 | trustAsResourceUrl }}" autoplay="0" frameborder="0" allowfullscreen ng-show="{{post.type === 'video'}}"></iframe>
 
-                    <!--
+                </div>
+
+
+              </div>
+            </div>
+
+          </div>
+
+          <!--
                 <ul class ="list-group" ng-show="showComments">
                     <li class = "list-group-item"> <b>Comments:</b></li>
-                    <li class = "list-group-item"  ng-repeat = "comment in post.comments.data"> 
+                    <li class = "list-group-item"  ng-repeat = "comment in post.comments.data">
                        <b>{{comment.from.name}}</b> {{comment.message}}
                     </li>
                 </ul>
 -->
-                    
-                    <section class="comment-list" ng-repeat = "comment in post.comments.data" ng-show="false">
-                        <article class="row">
-                            <div class="col-md-2 col-sm-2 hidden-xs">
-                            <figure class="thumbnail">
-                                <img class="img-responsive" ng-src="{{getUserThumb()}}"/>
-                                <figcaption class="text-center">{{comment.from.name}}</figcaption>
-                                </figure>
-                            </div>
-                            <div class="col-md-10 col-sm-10">
-                            <div class="panel panel-default arrow left">
-                                <div class="panel-body">
-                                    <header class="text-left">
-                                        <div class="comment-user"><i class="fa fa-user"></i> {{comment.from.name}}</div>
-                                       <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i> Dec 16, 2014</time> 
-                                    </header>
-                                    <hr>
-                                    <div class="comment-post">
-                                        <p>
-                                            {{comment.message}}
-                                        </p>
-                                    </div>
-                                    <p class="text-right"><a href="#" class="btn btn-default btn-sm"><i class="fa fa-reply"></i> reply</a></p>
-                                </div>
-                                </div>
-                            </div>
-                        </article>
-                    </section>
-                    <!--add comment -->
-                    <section class="comment-list">
-                        <article class="row">
-                            <div class="col-md-2 col-sm-2 hidden-xs">
-                            <figure class="thumbnail">
-                                <img class="img-responsive" ng-src="{{getUserThumb(user)}}"/>
-                                <figcaption class="text-center">{{user.name}}</figcaption>
-                                </figure>
-                            </div>
-                            <div class="col-md-10 col-sm-10">
-                            <div class="panel panel-default arrow left">
-                                <div class="panel-body">
-                                    <header class="text-left">
-                                        <div class="comment-user"><i class="fa fa-user"></i> {{user.name}}</div>
-                                       <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i> Dec 16, 2014</time> 
-                                    </header>
-                                    <hr>
-                                    <div class="comment-post">
-                                        <textarea class="form-control input-sm " type="textarea" id="message" placeholder="post comment..." maxlength="140" rows="7" ng-model="comment"></textarea>
-                                    </div>
-                                    <p class="text-right"><a href="#" class="btn btn-default btn-sm" ng-click="submitComment(comment, post.id)"><i class="fa fa-reply"></i> Submit</a></p>
-                                </div>
-                                </div>
-                            </div>
-                        </article>
-                    </section>
-                    
-                    
-                    <div style='clear: both;'></div>        
-            </div>
+
+          <section class="comment-list" ng-repeat="comment in post.comments.data" ng-show="false">
+            <article class="row">
+              <div class="col-md-2 col-sm-2 hidden-xs">
+                <figure class="thumbnail">
+                  <img class="img-responsive" ng-src="{{getUserThumb()}}" />
+                  <figcaption class="text-center">{{comment.from.name}}</figcaption>
+                </figure>
+              </div>
+              <div class="col-md-10 col-sm-10">
+                <div class="panel panel-default arrow left">
+                  <div class="panel-body">
+                    <header class="text-left">
+                      <div class="comment-user"><i class="fa fa-user"></i> {{comment.from.name}}</div>
+                      <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i> Dec 16, 2014</time>
+                    </header>
+                    <hr>
+                    <div class="comment-post">
+                      <p>
+                        {{comment.message}}
+                      </p>
+                    </div>
+                    <p class="text-right"><a href="#" class="btn btn-default btn-sm"><i class="fa fa-reply"></i> reply</a></p>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </section>
+          <!--add comment -->
+          <section class="comment-list" ng-show="false">
+            <article class="row">
+              <div class="col-md-2 col-sm-2 hidden-xs">
+                <figure class="thumbnail">
+                  <img class="img-responsive" ng-src="{{getUserThumb(user)}}" />
+                  <figcaption class="text-center">{{user.name}}</figcaption>
+                </figure>
+              </div>
+              <div class="col-md-10 col-sm-10">
+                <div class="panel panel-default arrow left">
+                  <div class="panel-body">
+                    <header class="text-left">
+                      <div class="comment-user"><i class="fa fa-user"></i> {{user.name}}</div>
+                      <time class="comment-date" datetime="16-12-2014 01:05"><i class="fa fa-clock-o"></i> Dec 16, 2014</time>
+                    </header>
+                    <hr>
+                    <div class="comment-post">
+                      <textarea class="form-control input-sm " type="textarea" id="message" placeholder="post comment..." maxlength="140" rows="7" ng-model="comment"></textarea>
+                    </div>
+                    <p class="text-right"><a href="#" class="btn btn-default btn-sm" ng-click="submitComment(comment, post.id)"><i class="fa fa-reply"></i> Submit</a></p>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </section>
+
+
+          <div style='clear: both;'></div>
         </div>
+      </div>
     </div>
 
-  
-    
-    <!-- In production use:
+  </div>
+  </div>
+
+  <!-- In production use:
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
     -->
-    <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/angular-facebook/lib/angular-facebook.js"></script>
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/angular-facebook/lib/angular-facebook.js"></script>
 
-    <script src="bower_components/angular-route/angular-route.js"></script>
-    <script src="app.js"></script>
-    <script src="components/version/version.js"></script>
-    <script src="components/version/version-directive.js"></script>
-    <script src="components/version/interpolate-filter.js"></script>
+  <script src="bower_components/angular-route/angular-route.js"></script>
+  <script src="app.js"></script>
+  <script src="components/version/version.js"></script>
+  <script src="components/version/version-directive.js"></script>
+  <script src="components/version/interpolate-filter.js"></script>
   <script src="//pkozlowski-opensource.github.io/angularjs-mongolab/1.0.0-RC1/angular-mongolab.js"></script>
-<script type='text/javascript' src='bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js'></script>
 
 
-    <script src="app.js"</script>
-</body>
-</html>
+  <script src="app.js" </script>
+    < /body> <
+    /html>
